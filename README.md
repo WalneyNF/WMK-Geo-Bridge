@@ -125,3 +125,18 @@ Executar clientes com a API ativa: `node examples/cliente.js`, `py -3 examples/c
 - [Padrao de documentacao](manuais/PADRAO-DOCUMENTACAO-WMK.md)
 - [Instalacao e testes](manuais/INSTALACAO-E-TESTES.md)
 Contribuicoes WMK: Walney Moreira Klein - walneyk@hotmail.com. Preservadas licencas originais.
+
+
+## Funcionamento independente e integrado — suíte WMK
+
+**Este projeto funciona de maneira independente:** não é obrigatório instalar os outros dois projetos WMK para usar suas funções principais.
+
+**Modo independente — WMK Geo Bridge:** Inicia API, Swagger e health check sem os demais. Consultas de veículos exigem fonte e credenciais válidas.
+
+**Modo integrado (opcional):** Consulta o GPS Tracker e normaliza dados para o Geo Intelligence e clientes externos. O recebimento de posições ainda não persiste dados.
+
+**Projetos relacionados:** [WMK GPS Tracker](https://github.com/WalneyNF/WMK-GPS-Tracker) · [WMK Geo Bridge](https://github.com/WalneyNF/WMK-Geo-Bridge) · [WMK Geo Intelligence](https://github.com/WalneyNF/WMK-Geo-Intelligence).
+
+**Situação dos testes:** os serviços responderam individualmente no laboratório, mas a integração ponta a ponta ainda não está aprovada. Consulte os manuais e os testes antes de disponibilizar dados privados.
+
+**Documentação:** [padrão WMK](manuais/PADRAO-DOCUMENTACAO-WMK.md). Créditos das contribuições WMK: **Walney Moreira Klein — walneyk@hotmail.com**. Preserve também as licenças e os avisos dos autores originais.
