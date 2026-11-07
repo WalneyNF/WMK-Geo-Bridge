@@ -5,6 +5,7 @@ import base64
 import hmac
 import json
 import os
+from pathlib import Path
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.error import HTTPError, URLError
@@ -21,6 +22,7 @@ TRACCAR_PASSWORD = os.getenv("WMK_TRACCAR_PASSWORD", "")
 API_KEY = os.getenv("WMK_BRIDGE_API_KEY", "")
 ALLOWED_ORIGINS = {"http://127.0.0.1:4173", "http://localhost:4173"}
 MAX_BODY = 16384
+DOCS_DIR = Path(__file__).resolve().parents[1] / "docs"
 
 def now():
     return datetime.now(timezone.utc).isoformat()
@@ -73,6 +75,25 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         route = urlsplit(self.path).path
+        static = {
+            "/docs": ("swagger.html", "text/html; charset=utf-8"),
+            "/docs/": ("swagger.html", "text/html; charset=utf-8"),
+            "/docs/manual": ("endpoints.html", "text/html; charset=utf-8"),
+            "/openapi.json": ("openapi.json", "application/json; charset=utf-8"),
+        }
+        if route in static:
+            filename, content_type = static[route]
+            try:
+                raw = (DOCS_DIR / filename).read_bytes()
+            except OSError:
+                return self.send_json(404, {"error": "documentation_not_found"})
+            self.send_response(200)
+            self.send_header("Content-Type", content_type)
+            self.send_header("Content-Length", str(len(raw)))
+            self.send_header("Cache-Control", "no-store")
+            self.end_headers()
+            self.wfile.write(raw)
+            return
         if route == "/health":
             return self.send_json(200, {"status": "ok", "service": "wmk-geo-bridge", "version": VERSION})
         if route == "/api/v1/capabilities":

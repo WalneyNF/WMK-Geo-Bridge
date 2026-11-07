@@ -107,3 +107,17 @@ A API atual foi projetada para **laboratório local**. Não exponha a porta 8766
 Abra `docs/index.html` no navegador para consultar instalação, arquitetura, APIs, exemplos, segurança e roteiro de desenvolvimento.
 
 **Créditos:** Walney Moreira Klein — walneyk@hotmail.com.
+
+## Documentação interativa da API (Swagger UI)
+
+Com o servidor iniciado, abra **http://127.0.0.1:8766/docs** (substitua a porta se usar WMK_BRIDGE_PORT). A interface permite explorar os endpoints, exemplos JSON, respostas HTTP e executar requisições de teste. Os recursos visuais do Swagger UI vêm de CDN e requerem internet; o contrato JSON e o manual HTML são servidos localmente.
+
+- **Swagger UI:** `/docs`
+- **Manual detalhado em português:** `/docs/manual`
+- **Especificação OpenAPI 3.0:** `/openapi.json` ou `docs/openapi.json`
+- **Exemplos de consumo:** `examples/cliente.js`, `examples/cliente.py`, `examples/cliente.php`
+- **Exemplo POST experimental:** `examples/enviar-posicao.py` (não persiste)
+
+Executar clientes com a API ativa: `node examples/cliente.js`, `py -3 examples/cliente.py`, `php examples/cliente.php`. Os exemplos tentam consultar veículos e exibem HTTP 503 se não houver credencial Traccar; isso é esperado.
+
+**Segurança:** Não publique a API local em rede. O Swagger UI é para laboratório e não substitui autenticação de leitura.

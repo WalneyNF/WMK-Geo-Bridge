@@ -1,0 +1,373 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "WMK Geo Bridge API",
+    "version": "0.1.0",
+    "description": "API experimental local. Créditos: Walney Moreira Klein — walneyk@hotmail.com. GET de veículos exige credencial do Traccar configurada no servidor. POST apenas valida e confirma recebimento: não persiste nem encaminha dados."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8766",
+      "description": "Porta padrão (pode ser alterada por WMK_BRIDGE_PORT)"
+    },
+    {
+      "url": "http://127.0.0.1:8767",
+      "description": "Porta alternativa para testes"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Diagnóstico"
+    },
+    {
+      "name": "GPS"
+    },
+    {
+      "name": "Integração externa"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Diagnóstico"
+        ],
+        "summary": "Verificar se a ponte está ativa",
+        "description": "Não testa a conexão ao Traccar. Retorna somente o estado do servidor HTTP.",
+        "responses": {
+          "200": {
+            "description": "Servidor ativo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                },
+                "example": {
+                  "status": "ok",
+                  "service": "wmk-geo-bridge",
+                  "version": "0.1.0"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/capabilities": {
+      "get": {
+        "tags": [
+          "Diagnóstico"
+        ],
+        "summary": "Consultar recursos e estado de configuração",
+        "description": "Não revela senhas nem tokens.",
+        "responses": {
+          "200": {
+            "description": "Recursos da versão atual",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Capabilities"
+                },
+                "example": {
+                  "schemaVersion": "1.0",
+                  "sources": [
+                    "traccar"
+                  ],
+                  "traccarConfigured": false,
+                  "writeEnabled": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vehicles": {
+      "get": {
+        "tags": [
+          "GPS"
+        ],
+        "summary": "Listar dispositivos e posições do Traccar",
+        "description": "Consulta /api/devices e /api/positions no Traccar configurado. Não lê simulador JSONL. A fonte Traccar pode conter posições simuladas; simulated=null significa origem não verificada.",
+        "responses": {
+          "200": {
+            "description": "Lista normalizada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehiclesResponse"
+                },
+                "example": {
+                  "schemaVersion": "1.0",
+                  "source": "traccar",
+                  "items": [
+                    {
+                      "id": "1",
+                      "deviceId": 1,
+                      "name": "Carro de exemplo",
+                      "source": "traccar",
+                      "simulated": null,
+                      "position": {
+                        "latitude": -22.28,
+                        "longitude": -42.53,
+                        "speedKmh": 18.52,
+                        "heading": 90,
+                        "timestamp": "2026-11-06T12:00:00Z",
+                        "valid": true
+                      }
+                    }
+                  ],
+                  "count": 1,
+                  "timestamp": "2026-11-06T12:00:01Z"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Traccar inacessível, autenticação recusada ou dados inválidos",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "traccar_unavailable_or_invalid_response"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Credenciais do Traccar não configuradas",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "traccar_auth_not_configured"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/positions": {
+      "post": {
+        "tags": [
+          "Integração externa"
+        ],
+        "summary": "Validar recebimento de posição externa (experimental)",
+        "description": "Exige WMK_BRIDGE_API_KEY no servidor e X-WMK-API-Key na requisição. Responde 202, mas NÃO persiste, não encaminha ao Traccar e não aparece em /api/v1/vehicles.",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalPosition"
+              },
+              "example": {
+                "id": "veiculo-demo-001",
+                "latitude": -22.28,
+                "longitude": -42.53
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Posição validada; NÃO persistida",
+            "content": {
+              "application/json": {
+                "example": {
+                  "accepted": true,
+                  "persisted": false,
+                  "id": "veiculo-demo-001",
+                  "timestamp": "2026-11-06T12:00:00Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON, dispositivo ou coordenadas inválidos"
+          },
+          "401": {
+            "description": "Chave incorreta"
+          },
+          "403": {
+            "description": "Escrita desabilitada no servidor"
+          },
+          "413": {
+            "description": "Tamanho de corpo inválido (máximo 16384 bytes)"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-WMK-API-Key",
+        "description": "Somente POST /api/v1/positions. Não usar senha real em documentação pública."
+      }
+    },
+    "schemas": {
+      "Health": {
+        "type": "object",
+        "required": [
+          "status",
+          "service",
+          "version"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ok"
+          },
+          "service": {
+            "type": "string",
+            "example": "wmk-geo-bridge"
+          },
+          "version": {
+            "type": "string",
+            "example": "0.1.0"
+          }
+        }
+      },
+      "Capabilities": {
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "string"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "traccarConfigured": {
+            "type": "boolean"
+          },
+          "writeEnabled": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Position": {
+        "type": "object",
+        "nullable": true,
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "minimum": -90,
+            "maximum": 90
+          },
+          "longitude": {
+            "type": "number",
+            "minimum": -180,
+            "maximum": 180
+          },
+          "speedKmh": {
+            "type": "number",
+            "description": "km/h (conversão de nós × 1,852)"
+          },
+          "heading": {
+            "type": "number",
+            "nullable": true,
+            "description": "Rumo em graus"
+          },
+          "timestamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "valid": {
+            "type": "boolean",
+            "nullable": true
+          }
+        }
+      },
+      "Vehicle": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "deviceId": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string",
+            "example": "traccar"
+          },
+          "simulated": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "position": {
+            "$ref": "#/components/schemas/Position"
+          }
+        }
+      },
+      "VehiclesResponse": {
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Vehicle"
+            }
+          },
+          "count": {
+            "type": "integer"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        }
+      },
+      "ExternalPosition": {
+        "type": "object",
+        "required": [
+          "id",
+          "latitude",
+          "longitude"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "latitude": {
+            "type": "number",
+            "minimum": -90,
+            "maximum": 90
+          },
+          "longitude": {
+            "type": "number",
+            "minimum": -180,
+            "maximum": 180
+          }
+        }
+      }
+    }
+  }
+}
