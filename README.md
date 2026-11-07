@@ -121,3 +121,7 @@ Com o servidor iniciado, abra **http://127.0.0.1:8766/docs** (substitua a porta 
 Executar clientes com a API ativa: `node examples/cliente.js`, `py -3 examples/cliente.py`, `php examples/cliente.php`. Os exemplos tentam consultar veículos e exibem HTTP 503 se não houver credencial Traccar; isso é esperado.
 
 **Segurança:** Não publique a API local em rede. O Swagger UI é para laboratório e não substitui autenticação de leitura.
+## Documentacao WMK em portugues
+- [Padrao de documentacao](manuais/PADRAO-DOCUMENTACAO-WMK.md)
+- [Instalacao e testes](manuais/INSTALACAO-E-TESTES.md)
+Contribuicoes WMK: Walney Moreira Klein - walneyk@hotmail.com. Preservadas licencas originais.
