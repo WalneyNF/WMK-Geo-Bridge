@@ -144,3 +144,6 @@ Contribuicoes WMK: Walney Moreira Klein - walneyk@hotmail.com. Preservadas licen
 **Guia de integracao e testes com Tracker e Intelligence:** [manuais/INTEGRACAO-TRACCAR-GEO.md](manuais/INTEGRACAO-TRACCAR-GEO.md).
 
 **Curso pratico em 10 modulos:** [GPS Tracker, Bridge e Geo Intelligence](manuais/CURSO-PRATICO-TESTES-GPS.md) - passo a passo, HTTP 503, JSON, seguranca e exercicios.
+
+## WMK API Security Center (laboratorio protegido)
+Servidor opt-in: `python src/protected_bridge.py` (127.0.0.1:8772). Gerencie chaves com `python src/security_cli.py --help`. [Manual do usuario](manuais/SEGURANCA-USUARIO.md) | [Manual do desenvolvedor](manuais/SEGURANCA-DESENVOLVEDOR.md). Nao altera a seguranca do Bridge legado; nao exponha a internet. POST retorna persisted:false.
