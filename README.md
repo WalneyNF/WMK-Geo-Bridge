@@ -142,3 +142,5 @@ Contribuicoes WMK: Walney Moreira Klein - walneyk@hotmail.com. Preservadas licen
 **Documentação:** [padrão WMK](manuais/PADRAO-DOCUMENTACAO-WMK.md). Créditos das contribuições WMK: **Walney Moreira Klein — walneyk@hotmail.com**. Preserve também as licenças e os avisos dos autores originais.
 
 **Guia de integracao e testes com Tracker e Intelligence:** [manuais/INTEGRACAO-TRACCAR-GEO.md](manuais/INTEGRACAO-TRACCAR-GEO.md).
+
+**Curso pratico em 10 modulos:** [GPS Tracker, Bridge e Geo Intelligence](manuais/CURSO-PRATICO-TESTES-GPS.md) - passo a passo, HTTP 503, JSON, seguranca e exercicios.
