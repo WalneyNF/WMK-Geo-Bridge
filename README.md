@@ -140,3 +140,5 @@ Contribuicoes WMK: Walney Moreira Klein - walneyk@hotmail.com. Preservadas licen
 **Situação dos testes:** os serviços responderam individualmente no laboratório, mas a integração ponta a ponta ainda não está aprovada. Consulte os manuais e os testes antes de disponibilizar dados privados.
 
 **Documentação:** [padrão WMK](manuais/PADRAO-DOCUMENTACAO-WMK.md). Créditos das contribuições WMK: **Walney Moreira Klein — walneyk@hotmail.com**. Preserve também as licenças e os avisos dos autores originais.
+
+**Guia de integracao e testes com Tracker e Intelligence:** [manuais/INTEGRACAO-TRACCAR-GEO.md](manuais/INTEGRACAO-TRACCAR-GEO.md).
